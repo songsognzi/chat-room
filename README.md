@@ -53,13 +53,6 @@ npm run dev                                  # http://127.0.0.1:8080
 
 ## 演示账号
 
-| 账号 | 密码 | 可显示昵称 | 可见菜单 |
-| --- | --- | --- | --- |
-| admin | admin123 | 系统管理员 | 系统配置、统计分析、登录信息、聊天室 |
-| analyst | analyst123 | 数据分析员 | 统计分析、聊天室 |
-| zhouyuyan | 1314520 | 周雨嫣 | 统计分析、聊天室 |
-| ssz | 1314520 | 宋宋子 | 统计分析、聊天室 |
-
 账号与菜单授权在 `backend/app/models.py` 的 `DEFAULT_USERS` 中定义，首次启动写入数据库（幂等，已有账号不会覆盖）。
 
 ## 测试
@@ -77,7 +70,7 @@ npm test
 ### POST /api/auth/login
 
 ```json
-{ "username": "admin", "password": "admin123" }
+{ "username": "<账号>", "password": "<密码>" }
 ```
 
 成功（200）：
@@ -88,7 +81,7 @@ npm test
   "message": "ok",
   "data": {
     "token": "eyJ1aWQiOjF9....",
-    "user": { "id": 1, "username": "admin", "displayName": "系统管理员" }
+    "user": { "id": 1, "username": "<账号>", "displayName": "<昵称>" }
   }
 }
 ```
@@ -106,7 +99,7 @@ npm test
   "data": [
     {
       "id": 1,
-      "username": "admin",
+      "username": "<账号>",
       "ip": "127.0.0.1",
       "userAgent": "Chrome 141 / Windows 11",
       "status": "success",

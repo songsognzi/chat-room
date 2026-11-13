@@ -33,12 +33,12 @@
     <div class="room">
       <header class="room-header">
         <span class="room-title">公共聊天室</span>
-        <span class="room-sub">所有人可见 · 最多展示最近 200 条</span>
+        <span class="room-sub">仅显示在线成员的实时消息 · 最多 200 条</span>
       </header>
 
       <el-alert v-if="error" :title="error" type="error" show-icon :closable="false" class="room-alert" />
 
-      <el-scrollbar ref="scroller" v-loading="loading" class="messages">
+      <el-scrollbar ref="scroller" class="messages">
         <div class="messages-inner">
           <div
             v-for="message in messages"
@@ -53,7 +53,7 @@
             </div>
           </div>
 
-          <p v-if="messages.length === 0 && !loading" class="empty-tip">
+          <p v-if="messages.length === 0" class="empty-tip">
             还没有人说话，发一条试试
           </p>
         </div>
@@ -120,7 +120,7 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 
-import { fetchChatMessages, sendChatMessage } from '@/api/chat'
+import { sendChatMessage } from '@/api/chat'
 import { authState } from '@/store/auth'
 import { insertEmoji, mergeMessages } from '@/utils/chat'
 import { createChatSocket } from '@/utils/chatSocket'
@@ -142,7 +142,6 @@ const myName = computed(() => authState.user?.displayName || authState.user?.use
 const messages = ref([])
 const online = ref([])
 const draft = ref('')
-const loading = ref(false)
 const error = ref('')
 const connected = ref(false)
 const scroller = ref(null)
@@ -159,17 +158,6 @@ async function scrollToBottom() {
   const wrap = scroller.value && scroller.value.$refs.wrapRef
   if (wrap) {
     wrap.scrollTop = wrap.scrollHeight
-  }
-}
-
-async function loadHistory() {
-  loading.value = true
-  try {
-    messages.value = mergeMessages([], await fetchChatMessages(), { limit: MAX_MESSAGES })
-  } catch (err) {
-    error.value = err.message || '加载聊天记录失败'
-  } finally {
-    loading.value = false
   }
 }
 
@@ -232,9 +220,7 @@ async function send() {
   }
 }
 
-onMounted(async () => {
-  await loadHistory()
-  scrollToBottom()
+onMounted(() => {
   connect()
 })
 
